@@ -2,6 +2,63 @@
 
 A Python utility for replacing table identifiers in SQL queries. This tool is particularly useful for modifying table references in SQL queries while preserving the query structure and handling various table identifier formats.
 
+## Quick Examples
+
+Here are some simple examples of what this tool can do:
+
+1. **Add a prefix to all table names:**
+```python
+def add_prefix(catalog, db, table_name):
+    return catalog, db, f"new_{table_name}"
+
+replacer = TableIdentifierReplacer(add_prefix)
+sql = "SELECT * FROM db1.users"
+new_sql = replacer.replace(sql)
+# Result: "SELECT * FROM db1.new_users"
+```
+
+2. **Move all tables to a new database:**
+```python
+def change_db(catalog, db, table_name):
+    return catalog, "new_database", table_name
+
+replacer = TableIdentifierReplacer(change_db)
+sql = "SELECT * FROM old_db.users JOIN old_db.orders"
+new_sql = replacer.replace(sql)
+# Result: "SELECT * FROM new_database.users JOIN new_database.orders"
+```
+
+3. **Handle complex queries with multiple tables:**
+```python
+def add_suffix(catalog, db, table_name):
+    return catalog, db, f"{table_name}_2024"
+
+replacer = TableIdentifierReplacer(add_suffix)
+sql = """
+    SELECT u.name, o.amount 
+    FROM db1.users u 
+    JOIN db1.orders o ON u.id = o.user_id
+    WHERE o.date > '2024-01-01'
+"""
+new_sql = replacer.replace(sql)
+# Result: 
+# SELECT u.name, o.amount 
+# FROM db1.users_2024 u 
+# JOIN db1.orders_2024 o ON u.id = o.user_id
+# WHERE o.date > '2024-01-01'
+```
+
+4. **Handle catalog references:**
+```python
+def add_catalog(catalog, db, table_name):
+    return "my_catalog", db, table_name
+
+replacer = TableIdentifierReplacer(add_catalog)
+sql = "SELECT * FROM db1.users"
+new_sql = replacer.replace(sql)
+# Result: "SELECT * FROM my_catalog.db1.users"
+```
+
 ## Features
 
 - Replace table identifiers in SQL queries
