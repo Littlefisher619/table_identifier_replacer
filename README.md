@@ -83,10 +83,3 @@ python -m pytest tests/
 - sqlglot: For SQL parsing and transformation
 - logging: For debugging and error tracking
 
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here] 
