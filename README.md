@@ -1,17 +1,17 @@
 # Table Identifier Replacer
 
-A Python utility for replacing table identifiers in Spark SQL queries. This tool is particularly useful for modifying table references in SQL queries while preserving the query structure and handling various table identifier formats.
+A Python utility for replacing table identifiers in SQL queries. This tool is particularly useful for modifying table references in SQL queries while preserving the query structure and handling various table identifier formats.
 
 ## Features
 
-- Replace table identifiers in Spark SQL queries
+- Replace table identifiers in SQL queries
 - Support for different table reference formats:
   - `db.table`
   - `catalog.db.table`
   - Backtick-quoted identifiers
-- Preserves query structure and formatting
 - Configurable table identifier replacement logic
-- Detailed logging for debugging
+- Default implementation for Spark SQL dialect
+- Easy to customize for other SQL dialects
 
 ## Installation
 
@@ -61,20 +61,50 @@ new_sql = replacer.replace(sql)
 # Result: "SELECT * FROM new_database.table1"
 ```
 
+## Customizing for Different SQL Dialects
+
+The current implementation uses Spark SQL dialect by default. To use a different SQL dialect, you can modify the code in two places:
+
+1. In the `replace` method, change the dialect parameter:
+```python
+# Change from:
+expression = sqlglot.parse_one(sql, dialect=Spark)
+
+# To your desired dialect, for example MySQL:
+from sqlglot.dialects import MySQL
+expression = sqlglot.parse_one(sql, dialect=MySQL)
+```
+
+2. In the final SQL generation:
+```python
+# Change from:
+return expression.sql(dialect=Spark, normalize=True, pretty=True)
+
+# To your desired dialect:
+return expression.sql(dialect=MySQL, normalize=True, pretty=True)
+```
+
+Supported dialects include:
+- MySQL
+- PostgreSQL
+- SQLite
+- Snowflake
+- BigQuery
+- And many more (see [SQLGlot documentation](https://github.com/tobymao/sqlglot) for full list)
+
 ## Development
 
 ### Setup
 
 1. Clone the repository
-2. Install dependencies:
+2. Install development dependencies:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements.dev.txt
    ```
 
 ### Testing
 
 ```bash
-pip install -r requirements.dev.txt
 python -m pytest tests/
 ```
 
