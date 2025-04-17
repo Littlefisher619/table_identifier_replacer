@@ -15,12 +15,7 @@ A Python utility for replacing table identifiers in Spark SQL queries. This tool
 
 ## Installation
 
-1. Clone this repository
-2. Copy the `table_identifier_replacer.py` file to your project
-3. Install the required dependencies:
-   ```bash
-   pip install sqlglot
-   ```
+Just Copy the `table_identifier_replacer.py` file to your project
 
 ## Usage
 
