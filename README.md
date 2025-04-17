@@ -70,6 +70,36 @@ new_sql = replacer.replace(sql)
 - Default implementation for Spark SQL dialect
 - Easy to customize for other SQL dialects
 
+## Limitations
+
+The current implementation has some limitations:
+
+1. **Table Names Without Database/Catalog Context**
+   - The tool will skip processing table names that appear without a database or catalog context
+   - This means these tables will remain unchanged in the output query
+   - This affects cases like:
+     - Common Table Expressions (CTEs)
+     - Table aliases in complex queries
+     - References to tables in the current database context
+   - Example:
+     ```sql
+     WITH temp_table AS (
+         SELECT * FROM users  -- 'users' will be skipped (unchanged)
+     )
+     SELECT * FROM temp_table
+     ```
+   - The query will still work, but the skipped tables won't be modified by your handler
+
+2. **Workarounds**
+   - If you need to modify these tables, you can modify the code to handle them:
+     ```python
+     # In _process_table method, remove or modify this check:
+     if db is None or name is None:
+         logger.debug("Skipping table - no database or name specified")
+         return table
+     ```
+   - However, be careful as this might affect query semantics in some cases
+
 ## Installation
 
 Just Copy the `table_identifier_replacer.py` file to your project
